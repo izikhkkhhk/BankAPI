@@ -11,7 +11,6 @@ require_once('model/Token.php');
 require_once('model/Transfer.php');
 
 //połączenie do bazy danych
-//TODO: wyodrębnić zmienne dotyczące środowiska do pliku konfiguracyjnego
 $db = new mysqli('localhost', 'root', '', 'bankAPI');
 //ustawienie kodowania znaków na utf8 dla bazy danych
 $db->set_charset('utf8');
@@ -25,7 +24,6 @@ use BankAPI\Token;
 
 //jeśli ktoś zapyta API bez żadnego parametru
 //zwróć hello world
-//TODO: to jest tylko do testów  - usunąć później
 Route::add('/', function() {
   echo 'Hello world!';
 });
@@ -103,7 +101,6 @@ Route::add('/account/([0-9]*)', function($accountNo) use($db) {
     //zwróć dane w formacie JSON korzystając z funkcji udostępniającej dane prywatne jako tablicę
     return json_encode($account->getArray());
 });
-
 //endpoint do wykonywania przelewów
 Route::add('/transfer/new', function() use($db) {
     //zakładamy, że aplikacja przekazała nam token w postaci danych JSON
@@ -134,7 +131,7 @@ Route::add('/transfer/new', function() use($db) {
       header('HTTP/1.1 400 Bad request');
       return json_encode(['error' => 'Invalid amount']);
     }
-    
+    //UODPORNIRNIE API
     $accountSource=Account::getAccount($source,$db);
     $actualBalance = $accountSource->getArray()['amount'];
     
@@ -143,6 +140,7 @@ Route::add('/transfer/new', function() use($db) {
       header('HTTP/1.1 400 Bad request');
       return json_encode(['error' => 'Invalid amount']);
     }
+    //KONIEC UODPORNIRNIE API
     Transfer::new($source, $target, $amount, $db);
     header('Status: 200');
     return json_encode(['status' => 'OK']);
